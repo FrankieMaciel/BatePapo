@@ -1,6 +1,8 @@
 import subprocess
 
-OFFSET = 2
+OFFSETX = 1
+OFFSETY = 0
+TITLEOFFSET = 1
 
 TOPLEFT = '┏'
 TOPRIGHT = '┓'
@@ -51,19 +53,31 @@ def squareLogic(x,y, sizeX, sizeY):
   else:
     print(' ', end='')
 
-def drawnSquare(text):
-  squareOffset = (OFFSET + 1)
-  textSpaceLength = squareOffset * 2
-  maxSize = getAvaliableSize() - textSpaceLength
+def drawnSquare(text, title):
+  title = ' ' + str(title) + ' '
+  squareOffsetX = (OFFSETX + 1)
+  squareOffsetY = (OFFSETY + 1)
+
+  textSpaceLengthX = squareOffsetX * 2
+  textSpaceLengthY = squareOffsetY * 2
+
+  maxSize = getAvaliableSize() - textSpaceLengthX
   allText, maxLength = splitWords(text, maxSize)
 
-  sizeY = (textSpaceLength + len(allText)) - 1
-  sizeX = (textSpaceLength + maxLength) - 1
+  sizeY = (textSpaceLengthY + len(allText)) - 1
+  sizeX = (textSpaceLengthX + maxLength) - 1
+  titleMax = len(title)
 
   for y in range(sizeY + 1):
     for x in range(sizeX + 1):
-      textIndexX = x - squareOffset
-      textIndexY = y - squareOffset
+      textIndexX = x - squareOffsetX
+      textIndexY = y - squareOffsetY
+      
+      titleIndex = x - TITLEOFFSET - 1
+      hasTiteIndex = titleIndex >= 0 and titleIndex < titleMax
+      if (hasTiteIndex and y == 0):
+        print(title[titleIndex], end='')
+        continue
 
       if (textIndexX < 0 or  textIndexY < 0): 
         squareLogic(x,y, sizeX, sizeY)
@@ -83,7 +97,7 @@ def drawnSquare(text):
       print(allText[textIndexY][textIndexX], end='')
     print()
 
-
-drawnSquare('Bom dia')
-      
-
+drawnSquare('Bom dia meus amigos', 'tully')
+drawnSquare('Bom dia :D', 'luca')
+drawnSquare('Bora de mines :p', 'Dani')
+drawnSquare('Oxi', 'Will')
