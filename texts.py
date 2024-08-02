@@ -1,4 +1,4 @@
-import subprocess
+import os
 
 OFFSETX = 1
 OFFSETY = 0
@@ -18,8 +18,7 @@ def colored(text, color):
     return f"\033[38;2;{r};{g};{b}m{text}\033[0m"
 
 def getAvaliableSize():
-  tput = subprocess.Popen(['tput', 'cols'], stdout=subprocess.PIPE)
-  return int(tput.communicate()[0].strip())
+  return os.get_terminal_size().columns
 
 def appendAndCheck(array, item):
   array.append(item)
