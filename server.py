@@ -8,6 +8,8 @@ PORT = 50000
 clients = []
 messages = []
 
+allClients = {}
+
 class Client:
   def __init__(self, name, conn, addr):
     self.name = name
@@ -18,7 +20,7 @@ class Client:
         assert isinstance(other, Client)
         return self.addr == other.addr
 
-def createClient(c):
+def createClient(c, addr):
   clientData = c.recv(1024).decode('utf-8')
   parts = clientData.split(' ')
 
@@ -35,13 +37,17 @@ def createClient(c):
   c.send(bytes(userListResponse, 'utf-8'))
 
   nc = Client(cName, c, addr)
+  allClients[nc.name] = nc
   clients.append(nc)
+  formatedMsg = f"!join {cName}"
+  for c in clients:
+    if c.addr == addr: continue
+    sendMsg(c, formatedMsg)
   print(f"{nc.name} Connected!")
   return nc
 
 def sendMsg(client, msg):
   try:
-    print(client.name)
     client.conn.send(bytes(msg, 'utf-8'))
   except Exception as e:
     print(e)
@@ -51,25 +57,32 @@ def protocol(msg, client):
   if not msg: return
 
   parts = msg.split(" ")
+  command, userName = parts[0], parts[1]
+  message = " ".join(parts[1:])
 
-  if parts[0] != '!sendmsg': return
-
-  parts.pop(0)
-  message = ' '.join(parts)
-  formatedMsg = f"!msg {client.name} {message}"
-
-  if len(clients) <= 1: return
-  for c in clients:
-    if c.addr == client.addr: continue
-    sendMsg(c, formatedMsg)
+  if command == '!sendmsg':
+    formatedMsg = f"!msg {client.name} {message}"
+    if len(clients) <= 1: return
+    for c in clients:
+      if c.addr == client.addr: continue
+      sendMsg(c, formatedMsg)
+  if command == '!poke':
+    pokedName = message.split(" ")[1]
+    if not allClients.get(pokedName): return
+    formatedMsg = f"!poke {client.name} {pokedName}"
+    if len(clients) <= 1: return
+    for c in clients:
+      if c.addr == client.addr: continue
+      sendMsg(c, formatedMsg)
 
 def desconectClient(client):
-  formatedMsg = f"!disconected {client.name}"
+  formatedMsg = f"!left {client.name}"
   for c in clients:
     if c.addr == client.addr: continue
     sendMsg(c, formatedMsg)
   client.conn.close()
   clients.remove(client)
+  allClients.pop(client.name)
   print(f"{client.name} desconectou!")
 
 def listenner(client):
@@ -95,7 +108,7 @@ if __name__ == "__main__":
 
   while True:
     c, addr = s.accept()
-    client = createClient(c)
+    client = createClient(c, addr)
     if not client: continue
     thread = Thread(target=listenner, args=(client,))
     thread.start()

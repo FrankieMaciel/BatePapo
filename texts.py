@@ -109,7 +109,7 @@ def drawnSquare(text, title = None, color = [255,255,255]):
         print(colored(allText[textIndexY][textIndexX], color), end='')
       else:
         print(allText[textIndexY][textIndexX], end='')
-    print()
+    print('\r')
 
 if __name__ == "__main__":
   drawnSquare('Mensagem de exemplo.')
