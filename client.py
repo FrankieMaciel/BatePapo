@@ -6,7 +6,7 @@ import sys
 import os
 
 HOST = 'localhost'
-PORT = 50000
+PORT = 5000
 name = 'user'
 
 usersInChat = {}
@@ -42,6 +42,12 @@ def addUser(name):
 def removeUser(name):
   usersInChat.pop(name)
 
+def changeUserName(oldName, newName):
+  if oldName in usersInChat:
+    nc = usersInChat.pop(oldName)
+    nc.name = newName
+    usersInChat[newName] = nc
+
 def getchar():
 	ch = ''
 	if os.name == 'nt': # how it works on windows
@@ -72,11 +78,18 @@ def getInput(prefix, suffix):
     return input_text
 
 def commands(s, text):
+  global name
   commandParts = text.split(" ")
   if len(commandParts) < 2: return
   if commandParts[0] == '/poke':
     formatedText = f"!poke {name} {commandParts[1]}"
     s.send(bytes(formatedText, 'utf-8'))
+  if commandParts[0] == '/changenickname':
+    nName = commandParts[1]
+    if nName == name: return
+    formatedText = f"!changenickname {name} {nName}"
+    s.send(bytes(formatedText, 'utf-8'))
+    name = nName
 
 def listenner(s):
   while True:
@@ -105,6 +118,10 @@ def listenner(s):
       drawnSquare(f'{userName} disconectou!', color=[100,100,100])
     if command == '!poke':
       drawnSquare(f'{userName} deu uma cutucada em {nmsg}', color=[100,100,100])
+      pass
+    if command == '!changenickname':
+      changeUserName(userName, nmsg)
+      drawnSquare(f'{userName} trocou seu nick para "{nmsg}"', color=[100,100,100])
       pass
 
 def sender(s):

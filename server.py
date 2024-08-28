@@ -3,7 +3,7 @@ import select
 from threading import Thread
 
 HOST = 'localhost'
-PORT = 50000
+PORT = 5000
 
 clients = []
 messages = []
@@ -37,7 +37,7 @@ def createClient(c, addr):
   c.send(bytes(userListResponse, 'utf-8'))
 
   nc = Client(cName, c, addr)
-  allClients[nc.name] = nc
+  allClients[nc.addr] = nc
   clients.append(nc)
   formatedMsg = f"!join {cName}"
   for c in clients:
@@ -74,6 +74,15 @@ def protocol(msg, client):
     for c in clients:
       if c.addr == client.addr: continue
       sendMsg(c, formatedMsg)
+  if command == '!changenickname':
+    newUserName = message.split(" ")[1]
+    c = allClients.get(client.addr)
+    c.name = newUserName
+    formatedMsg = f"!changenickname {userName} {newUserName}"
+    if len(clients) <= 1: return
+    for c in clients:
+      # if c.addr == client.addr: continue
+      sendMsg(c, formatedMsg)
 
 def desconectClient(client):
   formatedMsg = f"!left {client.name}"
@@ -82,7 +91,7 @@ def desconectClient(client):
     sendMsg(c, formatedMsg)
   client.conn.close()
   clients.remove(client)
-  allClients.pop(client.name)
+  allClients.pop(client.addr)
   print(f"{client.name} desconectou!")
 
 def listenner(client):
