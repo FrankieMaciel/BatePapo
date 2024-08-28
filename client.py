@@ -82,7 +82,7 @@ def commands(s, text):
   commandParts = text.split(" ")
   if len(commandParts) < 2: return
   if commandParts[0] == '/poke':
-    formatedText = f"!poke {name} {commandParts[1]}"
+    formatedText = f"!poke {commandParts[1]}"
     s.send(bytes(formatedText, 'utf-8'))
   if commandParts[0] == '/changenickname':
     nName = commandParts[1]

@@ -67,9 +67,8 @@ def protocol(msg, client):
       if c.addr == client.addr: continue
       sendMsg(c, formatedMsg)
   if command == '!poke':
-    pokedName = message.split(" ")[1]
-    if not allClients.get(pokedName): return
-    formatedMsg = f"!poke {client.name} {pokedName}"
+    if not allClients.get(userName): return
+    formatedMsg = f"!poke {client.name} {userName}"
     if len(clients) <= 1: return
     for c in clients:
       if c.addr == client.addr: continue
