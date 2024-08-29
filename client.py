@@ -107,21 +107,21 @@ def listenner(s):
     if command == '!msg': 
       userClient = usersInChat.get(userName)
       if not userClient: continue
-      drawnSquare(nmsg, userName, color= userClient.color)
+      drawnSquare(nmsg, userName, color= userClient.color, pos = 2)
     if command == '!users': getUsers(userName, nmsg)
 
     if command == '!join':
       addUser(userName)
-      drawnSquare(f'{userName} conectou!', color=[100,100,100])
+      drawnSquare(f'{userName} conectou!', color=[100,100,100], pos = 1)
     if command == '!left': 
       removeUser(userName)
-      drawnSquare(f'{userName} disconectou!', color=[100,100,100])
+      drawnSquare(f'{userName} disconectou!', color=[100,100,100], pos = 1)
     if command == '!poke':
-      drawnSquare(f'{userName} deu uma cutucada em {nmsg}', color=[100,100,100])
+      drawnSquare(f'{userName} deu uma cutucada em {nmsg}', color=[100,100,100], pos = 1)
       pass
     if command == '!changenickname':
       changeUserName(userName, nmsg)
-      drawnSquare(f'{userName} trocou seu nick para "{nmsg}"', color=[100,100,100])
+      drawnSquare(f'{userName} trocou seu nick para "{nmsg}"', color=[100,100,100], pos = 1)
       pass
 
 def sender(s):

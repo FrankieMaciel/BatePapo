@@ -67,11 +67,10 @@ def protocol(msg, client):
       if c.addr == client.addr: continue
       sendMsg(c, formatedMsg)
   if command == '!poke':
-    if not allClients.get(userName): return
+    if not allClients.get(client.addr): return
     formatedMsg = f"!poke {client.name} {userName}"
     if len(clients) <= 1: return
     for c in clients:
-      if c.addr == client.addr: continue
       sendMsg(c, formatedMsg)
   if command == '!changenickname':
     newUserName = message.split(" ")[1]
