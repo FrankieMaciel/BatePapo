@@ -28,7 +28,6 @@ def generate_random_color():
 
 def getUsers(numOfUseresAsStr, usersString):
   usersInChat.clear()
-  numOfUsers = int(numOfUseresAsStr)
   usersList = usersString.split(" ")
   for userName in usersList:
     if userName == '': continue
@@ -99,6 +98,7 @@ def listenner(s):
     # process the message and get params
     message = message.decode('utf-8')
     parts = message.split(" ")
+    if len(parts) < 2: continue
     command, userName = parts[0], parts[1]
     nmsg = " ".join(parts[2:])
     
@@ -106,8 +106,9 @@ def listenner(s):
     print('\r\033[K\r', end='')
     if command == '!msg': 
       userClient = usersInChat.get(userName)
-      if not userClient: continue
-      drawnSquare(nmsg, userName, color= userClient.color, pos = 2)
+      if not userClient: ncolor = [100,100,100]
+      else: ncolor = userClient.color
+      drawnSquare(nmsg, userName, color = ncolor, pos = 2)
     if command == '!users': getUsers(userName, nmsg)
 
     if command == '!join':

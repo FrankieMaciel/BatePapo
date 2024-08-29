@@ -30,19 +30,16 @@ def createClient(c, addr):
     c.close()
     return False
 
+  nc = Client(cName, c, addr)
+  clients.append(nc)
   nameList = [c.name for c in clients]
   nListLen = len(nameList)
   strNameList = ' '.join(nameList)
   userListResponse = f"!users {nListLen} {strNameList}"
-  c.send(bytes(userListResponse, 'utf-8'))
+  for cli in clients:
+      sendMsg(cli, userListResponse)
 
-  nc = Client(cName, c, addr)
   allClients[nc.addr] = nc
-  clients.append(nc)
-  formatedMsg = f"!join {cName}"
-  for c in clients:
-    if c.addr == addr: continue
-    sendMsg(c, formatedMsg)
   print(f"{nc.name} Connected!")
   return nc
 
@@ -57,6 +54,7 @@ def protocol(msg, client):
   if not msg: return
 
   parts = msg.split(" ")
+  if len(parts) < 2: return
   command, userName = parts[0], parts[1]
   message = " ".join(parts[1:])
 
@@ -79,7 +77,6 @@ def protocol(msg, client):
     formatedMsg = f"!changenickname {userName} {newUserName}"
     if len(clients) <= 1: return
     for c in clients:
-      # if c.addr == client.addr: continue
       sendMsg(c, formatedMsg)
 
 def desconectClient(client):
